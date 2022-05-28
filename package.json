@@ -1,0 +1,12 @@
+{
+  "name": "simple-db-app",
+  "version": "1.0.0",
+  "description": "a simple app that utilizes both a relational and non-relational db. to be used for deploying an app that utilizes a db to a vps",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ahmad Jiha",
+  "license": "ISC"
+}
