@@ -4,19 +4,43 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
+const db = require('./modules/apidb');
 const Visitor = require('./models/visitor');
 
-app.get('/', (request, response) => {
+function logRequest(request) {
+  db.none('INSERT INTO api(method) VALUES($1)', [request.method])
+    .then(() => {
+      console.log('success')
+    })
+    .catch(error => {
+      console.log('error');
+      console.log(error);
+    });
+}
+
+db.any('SELECT * FROM api WHERE method = $1', ['POST'])
+  .then(data => {
+    console.log('success')
+    console.log(data)
+  })
+  .catch(error => {
+    console.log("connection failed", error)
+  });
+
+app.get('/dbapp/', (request, response) => {
+  logRequest(request);
   response.send('<h1>Hello World!</h1>');
 });
 
 app.get('/dbapp/api/visitors', (request, response) => {
+  logRequest(request);
   Visitor.find({}).then(visitors => {
     response.json(visitors);
   });
 });
 
 app.post('/dbapp/api/visitors', (request, response) => {
+  logRequest(request);
   const body = request.body;
 
   if (body === undefined) {
@@ -30,6 +54,18 @@ app.post('/dbapp/api/visitors', (request, response) => {
 
   visitor.save().then(savedVisitor => {
     response.json(savedVisitor);
+  });
+});
+
+app.get('/dbapp/api/requests', (request, response) => {
+  db.any('SELECT * FROM api')
+  .then(data => {
+    console.log('success');
+    console.log(data);
+    response.json(data);
+  })
+  .catch(error => {
+    console.log("connection failed", error)
   });
 });
 
